@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import io.github.qishr.cascara.common.diagnostic.NullReporter;
 import io.github.qishr.cascara.common.diagnostic.Reporter;
-import io.github.qishr.cascara.common.diagnostic.Table;
+import io.github.qishr.cascara.common.util.Table;
 import io.github.qishr.cascara.common.util.ContentType;
 
 public final class ContentTypeNormalizer {
