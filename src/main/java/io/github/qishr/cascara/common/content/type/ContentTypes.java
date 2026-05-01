@@ -12,8 +12,8 @@ import java.util.Set;
 
 import io.github.qishr.cascara.common.diagnostic.NullReporter;
 import io.github.qishr.cascara.common.diagnostic.Reporter;
-import io.github.qishr.cascara.common.diagnostic.Table;
 import io.github.qishr.cascara.common.util.ContentType;
+import io.github.qishr.cascara.common.util.Table;
 import io.github.qishr.cascara.lang.yaml.processor.YamlSerializer;
 
 public class ContentTypes {
