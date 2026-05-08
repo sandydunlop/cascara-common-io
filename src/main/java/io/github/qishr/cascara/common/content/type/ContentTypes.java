@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import io.github.qishr.cascara.common.diagnostic.NullReporter;
+import io.github.qishr.cascara.common.diagnostic.NoOpReporter;
 import io.github.qishr.cascara.common.diagnostic.Reporter;
 import io.github.qishr.cascara.common.util.ContentType;
 import io.github.qishr.cascara.common.util.Table;
@@ -19,7 +19,7 @@ import io.github.qishr.cascara.lang.yaml.processor.YamlSerializer;
 public class ContentTypes {
     private static final Path cascaraDir = Paths.get(System.getProperty("user.home")).resolve(".cascara");
     private static final Path registryPath = cascaraDir.resolve("canonical-content-types.yaml");
-    private static Reporter reporter = new NullReporter();
+    private static Reporter reporter = new NoOpReporter();
     private static ContentTypeRegistry contentTypeRegistry;
     private static boolean initialized;
 
