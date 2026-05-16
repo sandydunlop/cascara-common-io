@@ -1,7 +1,6 @@
 package io.github.qishr.cascara.common.content.type;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,24 +9,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import io.github.qishr.cascara.common.util.ContentTypeResolver;
 import io.github.qishr.cascara.common.diagnostic.NoOpReporter;
 import io.github.qishr.cascara.common.diagnostic.Reporter;
 import io.github.qishr.cascara.common.util.ContentType;
 import io.github.qishr.cascara.common.util.Table;
 import io.github.qishr.cascara.lang.yaml.processor.YamlSerializer;
 
-public class ContentTypes {
+public class ContentTypeStore implements ContentTypeResolver {
     private static final Path cascaraDir = Paths.get(System.getProperty("user.home")).resolve(".cascara");
     private static final Path registryPath = cascaraDir.resolve("canonical-content-types.yaml");
-    private static Reporter reporter = new NoOpReporter();
-    private static ContentTypeRegistry contentTypeRegistry;
-    private static boolean initialized;
 
-    public static void init() throws ContentTypeException {
-        if (initialized) {
-            // TODO: Check if file is modified
-            return;
-        }
+    private static ContentTypeStore instance;
+
+    private Reporter reporter = new NoOpReporter();
+    private ContentTypeRegistry contentTypeRegistry;
+
+    private ContentTypeStore() {
+        init();
+    }
+
+    private void init() {
         YamlSerializer serializer = new YamlSerializer();
         if (Files.exists(registryPath)) {
             String yamlContent;
@@ -40,17 +42,29 @@ public class ContentTypes {
         } else {
             contentTypeRegistry = new ContentTypeRegistry();
         }
-
-        initialized = true;
     }
 
-    public static List<ContentType> getAll() throws ContentTypeException {
-        init();
+    public static ContentTypeStore instance() {
+        if (instance == null) {
+            instance = new ContentTypeStore();
+            // instance.init();
+        }
+        return instance;
+    }
+
+    public void setReporter(Reporter reporter) {
+        if (reporter == null) {
+            this.reporter = new NoOpReporter();
+        } else {
+            this.reporter = reporter;
+        }
+    }
+
+    public List<ContentType> getAll() throws ContentTypeException {
         return contentTypeRegistry.getRecords();
     }
 
-    public static void addAll(List<? extends ContentType> contentTypes) {
-        init();
+    public void addAll(List<? extends ContentType> contentTypes) {
         List<ContentType> allContentTypes = new ArrayList<>(contentTypeRegistry.getRecords());
         for (ContentType type : contentTypes) {
             allContentTypes.add(type);
@@ -58,15 +72,13 @@ public class ContentTypes {
         normalizeAndPersist(allContentTypes);
     }
 
-    public static void add(ContentType contentType) {
-        init();
+    public void add(ContentType contentType) {
         List<ContentType> allContentTypes = new ArrayList<>(contentTypeRegistry.getRecords());
         allContentTypes.add(contentType);
         normalizeAndPersist(allContentTypes);
     }
 
-    public static ContentType find(String type) {
-        init();
+    public ContentType resolve(String type) {
         for (ContentType contentType : contentTypeRegistry.getRecords()) {
             if (contentType.getCanonicalId().equals(type)
                 || contentType.getName().equalsIgnoreCase(type)
@@ -83,7 +95,7 @@ public class ContentTypes {
     //
     //
 
-    private static void normalizeAndPersist(List<ContentType> allContentTypes) {
+    private void normalizeAndPersist(List<ContentType> allContentTypes) {
         YamlSerializer serializer = new YamlSerializer();
         ContentTypeNormalizer normalizer = new ContentTypeNormalizer();
         normalizer.setReporter(reporter);
@@ -101,7 +113,7 @@ public class ContentTypes {
         }
     }
 
-    public static void reconcile(List<MergedContentType> types, ContentTypeRegistry registry) {
+    public void reconcile(List<MergedContentType> types, ContentTypeRegistry registry) {
         List<ContentType> updated = new ArrayList<>();
 
         for (MergedContentType group : types) {
@@ -135,7 +147,7 @@ public class ContentTypes {
         registry.setRecords(updated);
     }
 
-    private static ContentType findMatch(
+    private ContentType findMatch(
         MergedContentType group,
         ContentTypeRegistry registry
     ) {
@@ -164,7 +176,7 @@ public class ContentTypes {
         return null;
     }
 
-    private static void mergeLists(List<String> target, Set<String> source) {
+    private void mergeLists(List<String> target, Set<String> source) {
         for (String item : source) {
             if (!target.contains(item)) {
                 target.add(item);
@@ -176,7 +188,7 @@ public class ContentTypes {
     // Diagnostics
     //
 
-    public static void debugOutputTypes(List<ContentType> types) {
+    public void debugOutputTypes(List<ContentType> types) {
         Table table = new Table();
         table.addColumn("Canonical ID");
         table.addColumn("Name");

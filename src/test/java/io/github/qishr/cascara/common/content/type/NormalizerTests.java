@@ -27,9 +27,9 @@ public class NormalizerTests {
         normalizer.setReporter(new SimpleReporter().setLevel(Level.DEBUG));
 
         List<MergedContentType> merged = normalizer.normalize(contentTypes);
-        ContentTypes.reconcile(merged, registry);
+        ContentTypeStore.instance().reconcile(merged, registry);
 
-        ContentTypes.debugOutputTypes(registry.getRecords());
+        ContentTypeStore.instance().debugOutputTypes(registry.getRecords());
 
         assertEquals(1, merged.size());
     }
@@ -48,9 +48,9 @@ public class NormalizerTests {
         normalizer.setReporter(new SimpleReporter().setLevel(Level.DEBUG));
 
         List<MergedContentType> merged = normalizer.normalize(contentTypes);
-        ContentTypes.reconcile(merged, registry);
+        ContentTypeStore.instance().reconcile(merged, registry);
 
-        ContentTypes.debugOutputTypes(registry.getRecords());
+        ContentTypeStore.instance().debugOutputTypes(registry.getRecords());
 
         assertEquals(1, merged.size());
     }

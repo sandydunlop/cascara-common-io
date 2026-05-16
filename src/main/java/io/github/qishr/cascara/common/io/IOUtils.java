@@ -6,11 +6,10 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentNavigableMap;
 
 import io.github.qishr.cascara.common.util.ContentType;
 import io.github.qishr.cascara.common.content.ResourceContent;
-import io.github.qishr.cascara.common.content.type.ContentTypes;
+import io.github.qishr.cascara.common.content.type.ContentTypeStore;
 import io.github.qishr.cascara.common.io.provider.CascaraResourceProvider;
 import io.github.qishr.cascara.common.io.provider.FileResourceProvider;
 import io.github.qishr.cascara.common.io.provider.HttpResourceProvider;
@@ -22,7 +21,6 @@ public class IOUtils {
     private static final Map<UriScheme, ResourceProvider> providers = new HashMap<>();
 
     static {
-        // TODO: Add ZIP, JAR, etc
         providers.put(UriScheme.CASCARA, new CascaraResourceProvider());
         providers.put(UriScheme.FILE, new FileResourceProvider());
         providers.put(UriScheme.HTTP, new HttpResourceProvider());
@@ -41,7 +39,7 @@ public class IOUtils {
     public static ResourceContent getResource(URI uri) throws IOException {
         ResourceStream res = getResourceAsStream(uri);
         String content = new String(res.stream.readAllBytes(), StandardCharsets.UTF_8);
-        ContentType ct = ContentTypes.find(res.mimeType);
+        ContentType ct = ContentTypeStore.instance().resolve(res.mimeType);
         if (ct == null && res.mimeType != null) {
             ct = new ContentType().withMimeType(res.mimeType);
         }
