@@ -16,10 +16,10 @@ public class NormalizerTests {
         List<ContentType> contentTypes = List.of(
             new ContentType("Text")
                 .withSuffix(".text")
-                .withMimeType("text/*"),
+                .withType("text/*"),
             new ContentType("Text")
                 .withSuffix(".text")
-                .withMimeType("text/plain")
+                .withType("text/plain")
         );
 
         ContentTypeRegistry registry = new ContentTypeRegistry();
@@ -39,8 +39,8 @@ public class NormalizerTests {
         List<ContentType> contentTypes = List.of(
             new ContentType("Text")
                 .withSuffix(".text")
-                .withMimeType("text/*")
-                .withMimeType("text/plain")
+                .withType("text/*")
+                .withType("text/plain")
         );
 
         ContentTypeRegistry registry = new ContentTypeRegistry();

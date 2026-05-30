@@ -41,7 +41,7 @@ public class IOUtils {
         String content = new String(res.stream.readAllBytes(), StandardCharsets.UTF_8);
         ContentType ct = ContentTypeStore.instance().resolve(res.mimeType);
         if (ct == null && res.mimeType != null) {
-            ct = new ContentType().withMimeType(res.mimeType);
+            ct = new ContentType().withType(res.mimeType);
         }
         return new ResourceContent(content, ct);
     }
